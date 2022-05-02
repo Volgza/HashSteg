@@ -15,10 +15,10 @@ public class Main {
         }
         //System.out.println(binaryMess);
         char[] arrayChar = binaryMess.toCharArray();
-        /*for (char charM : arrayChar) {
+        for (char charM : arrayChar) {
             System.out.print(charM);
-        }*/
-        /*String InputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
+        }
+        String InputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
                 "Did waander darkling in the eternal space, Raaaabyless, and pathless, and the icy earth " +
                 "Swung blind and blackening in the moonless air;";
         String[] array = InputText.split(",|\\.|\\;");
@@ -50,7 +50,7 @@ public class Main {
         }
         else {
             System.out.println("\nUnsucceed");
-        }*/
+        }
         String OutputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
                 "Did waander darkling in the eternal space, Raaaabyless, and pathless, and the icy earth " +
                 "Swung blind and blackening in the moonless air;";
