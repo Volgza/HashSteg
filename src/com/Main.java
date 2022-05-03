@@ -1,22 +1,47 @@
 package com;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+
+import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 public class Main {
-    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-        InputStream inputStream = System.in;
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+
+        /*Считываем сообщение для вложения. Выход в строку InputMess*/
+        int a = -111;
+        System.out.println(Integer.toBinaryString(a));
+        /*InputStream inputStream = System.in;
         Reader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
         String InputMess = bufferedReader.readLine();
-        StringBuffer appendMess = new StringBuffer();
-        for (int i = 0; i < InputMess.length(); i++) {
-            int asciiValue = InputMess.charAt(i);
-            String binaryMess = Integer.toBinaryString(asciiValue);
+        System.out.println(InputMess);
+        *//*Шифруем*//*
+        *//*Считываем ключ с клавиатуры в символьную строку*//*
+        InputStream inputKey = System.in;
+        Reader inputKeyReader = new InputStreamReader(inputKey);
+        BufferedReader KeyReader = new BufferedReader(inputKeyReader);
+        String InputKeyString = KeyReader.readLine();
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        byte[] keyBytes = InputKeyString.getBytes(StandardCharsets.UTF_8);
+        SecureRandom secRandom = new SecureRandom(keyBytes);
+        keyGen.init(secRandom);
+        Key key = keyGen.generateKey();
+
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(ENCRYPT_MODE, key);
+        byte[] cipherMess = cipher.doFinal(InputMess.getBytes(StandardCharsets.UTF_8));*/
+        /*for (byte Mbyte : cipherMess) {
+        System.out.println(Mbyte); }*/
+
+        /*StringBuffer appendMess = new StringBuffer();
+        for (int i = 0; i < cipherMess.length; i++) {
+            //int asciiValue = InputMess.charAt(i);
+            String binaryMess = Integer.toBinaryString(cipherMess[i]);
             if (binaryMess.length() < 8) {
                 int LengthOfZero = 8 - binaryMess.length();
                 binaryMess = "0".repeat(LengthOfZero) + binaryMess;
@@ -26,12 +51,12 @@ public class Main {
                 appendMess.append(binaryMess);
             }
         }
-        System.out.println(appendMess);
+        System.out.println(appendMess);*/
 
-        char[] arrayChar = appendMess.toString().toCharArray();
-       /*for (char charM : arrayChar) {
+        /*char[] arrayChar = appendMess.toString().toCharArray();
+       for (char charM : arrayChar) {
             System.out.println(charM);
-        }*/
+        }
         File text = new File("/home/maria/IdeaProjects/HashSteg/src/com/InputText.txt");
 
         BufferedReader ReadText = new BufferedReader(new FileReader(text));
@@ -41,9 +66,9 @@ public class Main {
             appendText.append(lineText);
         //System.out.println(appendText);
         String[] array = appendText.toString().split(",|\\.|\\;|\"");
-        /*for (String word : array) {
+        for (String word : array) {
             System.out.println(word);
-        }*/
+        }
         String[] arrayForMess = new String[arrayChar.length];
         if (array.length<arrayChar.length)
             System.out.println("Текст недостаточно длинный для вложения");
@@ -71,11 +96,11 @@ public class Main {
        {
            arrayMiddle[i] = ReadMiddle.readLine();
        }
-        /* int i = 0;
+         int i = 0;
         while ((MiddlelineText = ReadMiddle.readLine()) != null) {
             arrayMiddle[i] = MiddlelineText;
             i++;
-        }*/
+        }
         //String[] arrayMiddle = appendMiddleText.toString().split("\\n");
         for (String word : arrayMiddle)
         {
@@ -106,7 +131,8 @@ public class Main {
         } else {
             System.out.println("\nUnsucceed");
         }
-        /*String OutputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
+
+        String OutputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
                 "Did waander darkling in the eternal space, Raaaabyless, and pathless, and the icy earth " +
                 "Swung blind and blackening in the moonless air;";
         String[] outarray = OutputText.split(",|\\.|\\;");
