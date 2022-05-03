@@ -29,9 +29,9 @@ public class Main {
         System.out.println(appendMess);
 
         char[] arrayChar = appendMess.toString().toCharArray();
-       for (char charM : arrayChar) {
+       /*for (char charM : arrayChar) {
             System.out.println(charM);
-        }
+        }*/
         File text = new File("/home/maria/IdeaProjects/HashSteg/src/com/InputText.txt");
 
         BufferedReader ReadText = new BufferedReader(new FileReader(text));
@@ -44,10 +44,47 @@ public class Main {
         /*for (String word : array) {
             System.out.println(word);
         }*/
-        /*MessageDigest md = MessageDigest.getInstance("MD5");
-        char[] firstbit = new char[array.length];
-        for (int i = 0; i < array.length; i++) {
-            byte[] hash = md.digest(array[i].getBytes(StandardCharsets.UTF_8));
+        String[] arrayForMess = new String[arrayChar.length];
+        if (array.length<arrayChar.length)
+            System.out.println("Текст недостаточно длинный для вложения");
+        else {
+
+            for (int i = 0; i < arrayForMess.length; i++) {
+                arrayForMess[i] = array[i];
+            }
+        }
+        try(FileWriter writer = new FileWriter("/home/maria/IdeaProjects/HashSteg/src/com/MiddleText.txt", false)) {
+            for (String forMess : arrayForMess) {
+                writer.write(forMess + "\n");
+            }
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        File MiddleText = new File("/home/maria/IdeaProjects/HashSteg/src/com/MiddleText.txt");
+
+        BufferedReader ReadMiddle = new BufferedReader(new FileReader(MiddleText));
+        String MiddlelineText;
+        String[] arrayMiddle = new String[arrayForMess.length];
+        //StringBuffer appendMiddleText = new StringBuffer();
+       for (int i = 0; i< arrayForMess.length; i++)
+       {
+           arrayMiddle[i] = ReadMiddle.readLine();
+       }
+        /* int i = 0;
+        while ((MiddlelineText = ReadMiddle.readLine()) != null) {
+            arrayMiddle[i] = MiddlelineText;
+            i++;
+        }*/
+        //String[] arrayMiddle = appendMiddleText.toString().split("\\n");
+        for (String word : arrayMiddle)
+        {
+            System.out.println(word);
+        }
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        char[] firstbit = new char[arrayMiddle.length];
+        for (int i = 0; i < arrayMiddle.length; i++) {
+            byte[] hash = md.digest(arrayMiddle[i].getBytes(StandardCharsets.UTF_8));
             StringBuffer sb = new StringBuffer();
             for (int j = 0; j < hash.length; j++) {
                 String s = Integer.toBinaryString(0xff & hash[j]);
@@ -60,7 +97,7 @@ public class Main {
             //System.out.println(String.format("%s", sb.toString()));
             firstbit[i] = sb.charAt(0);
         }
-        System.out.println("\n");
+
         for (char bit : firstbit) {
             System.out.print(bit);
         }
@@ -69,7 +106,7 @@ public class Main {
         } else {
             System.out.println("\nUnsucceed");
         }
-        String OutputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
+        /*String OutputText = "I haad a dream, which waas not all a dream. The bright sun was extinguish'd, and the stars. " +
                 "Did waander darkling in the eternal space, Raaaabyless, and pathless, and the icy earth " +
                 "Swung blind and blackening in the moonless air;";
         String[] outarray = OutputText.split(",|\\.|\\;");
@@ -95,10 +132,10 @@ public class Main {
         }
         String outMess = outsb.toString();
         int outascii = Integer.parseInt(outMess, 2);
-        System.out.println((char) outascii);
-
-    }*/
+        System.out.println((char) outascii);*/
 
     }
-}
+
+    }
+
 
