@@ -4,54 +4,118 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.Random;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 
+import static java.lang.Math.ceil;
+import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 public class Main {
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
         /*Считываем сообщение для вложения. Выход в строку InputMess*/
-        int a = -111;
-        System.out.println(Integer.toBinaryString(a));
-        /*InputStream inputStream = System.in;
+        /*int a = -111;
+        System.out.println(Integer.toBinaryString(0xFF & a));*/
+        InputStream inputStream = System.in;
         Reader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String InputMess = bufferedReader.readLine();
         System.out.println(InputMess);
-        *//*Шифруем*//*
-        *//*Считываем ключ с клавиатуры в символьную строку*//*
-        InputStream inputKey = System.in;
+
+
+        //Шифруем
+        //Считываем ключ с клавиатуры в символьную строку
+        /*InputStream inputKey = System.in;
         Reader inputKeyReader = new InputStreamReader(inputKey);
         BufferedReader KeyReader = new BufferedReader(inputKeyReader);
         String InputKeyString = KeyReader.readLine();
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        KeyGenerator keyGen = KeyGenerator.getInstance("ARCFOUR");
         byte[] keyBytes = InputKeyString.getBytes(StandardCharsets.UTF_8);
         SecureRandom secRandom = new SecureRandom(keyBytes);
         keyGen.init(secRandom);
         Key key = keyGen.generateKey();
 
-        Cipher cipher = Cipher.getInstance("AES");
+        Cipher cipher = Cipher.getInstance("RC4");
         cipher.init(ENCRYPT_MODE, key);
-        byte[] cipherMess = cipher.doFinal(InputMess.getBytes(StandardCharsets.UTF_8));*/
-        /*for (byte Mbyte : cipherMess) {
-        System.out.println(Mbyte); }*/
-
-        /*StringBuffer appendMess = new StringBuffer();
-        for (int i = 0; i < cipherMess.length; i++) {
-            //int asciiValue = InputMess.charAt(i);
-            String binaryMess = Integer.toBinaryString(cipherMess[i]);
-            if (binaryMess.length() < 8) {
-                int LengthOfZero = 8 - binaryMess.length();
+        byte[] cipherMess = cipher.doFinal(InputMess.getBytes(StandardCharsets.UTF_8));
+        StringBuilder encrSB = new StringBuilder();
+        for (byte encB : cipherMess) {
+            encrSB.append(encB);
+        }
+        System.out.println(encrSB);*/
+        StringBuffer appendMess = new StringBuffer();
+        String[] StringArMess = new String[InputMess.length()];
+        for (int i = 0; i < InputMess.length(); i++) {
+            int asciiValue = InputMess.charAt(i);
+            String binaryMess = Integer.toBinaryString(asciiValue);
+            if (binaryMess.length() < 11) {
+                int LengthOfZero = 11 - binaryMess.length();
                 binaryMess = "0".repeat(LengthOfZero) + binaryMess;
                 appendMess.append(binaryMess);
-            }
-            else {
+                StringArMess[i] = binaryMess;
+            } else {
                 appendMess.append(binaryMess);
+                StringArMess[i] = binaryMess;
             }
         }
-        System.out.println(appendMess);*/
+        System.out.println(appendMess);
+        System.out.println(Arrays.toString(StringArMess));
+        int length = (int) ceil(appendMess.length() / 11.0);
+        System.out.println("длина "+length);
+        SecureRandom randomKey = new SecureRandom();
+        short[] arrayKey = new short[length];
+        for (int i =0; i<length; i++) {
+            arrayKey[i] = (short) randomKey.nextInt();
+        }
+        System.out.println("первый элемент ключа " + Integer.toBinaryString(arrayKey[0]));
+        //int keyLong = randomKey.nextInt();
+        short[] appendMessAr = new short[length];
+        for (int i = 0; i<length; i++) {
+            appendMessAr[i] = Short.parseShort(StringArMess[i], 2);
+        }
+
+        System.out.println("первый элемент массива " + Integer.toBinaryString(appendMessAr[0]));
+        short[] cipherMess = new short[length];
+        for (int i=0; i<cipherMess.length; i++) {
+            cipherMess[i] = (short) (appendMessAr[i] ^ arrayKey[i]);
+        }
+        System.out.println("первый элемент зашифр массива " + Integer.toBinaryString(cipherMess[0]));
+        //System.out.println("length "+cipherMess.length);
+        StringBuilder cipherSb = new StringBuilder();
+        for (short cipM : cipherMess) {
+            String StcipM = Integer.toBinaryString(cipM);
+            if (StcipM.length() < 32) {
+                int LengthOfZero = 32 - StcipM.length();
+                StcipM = "0".repeat(LengthOfZero) + StcipM;
+                cipherSb.append(StcipM.substring(21, 32));
+            } else {
+                cipherSb.append(StcipM.substring(21,32));
+            }
+        }
+        System.out.println("зашифрованная строка " + cipherSb.toString());
+        int decLenght = (int) ceil(cipherSb.length()/11.0);
+        StringBuilder decodSb = new StringBuilder();
+        String[] decodeMess = new String[decLenght];
+        int j=0;
+            for (int i = 0; i < cipherSb.length()-11; i = i + 11) {
+                decodeMess[j] = cipherSb.substring(i, i + 11);
+                j++;
+            }
+
+        System.out.println(Arrays.toString(decodeMess));
+        /*String keyShortSt = Integer.toBinaryString(keyLong).substring(0,11);
+        short keyShort = Short.parseShort(keyShortSt, 2);
+        System.out.println(Integer.toBinaryString(keyShort));
+        int InputMessShort = Integer.parseInt(appendMess.toString(), 2);
+        System.out.println(Integer.toBinaryString(InputMessShort));*/
+        //short cipherMess = (short) (keyShort ^ InputMessShort);
+        //System.out.println(Integer.toBinaryString(cipherMess));
+
+        /*cipher.init(DECRYPT_MODE, key);
+        byte[] cipherMessDec = cipher.doFinal(cipherMess);
+        System.out.println(Integer.toBinaryString(cipherMessDec[0]));*/
 
         /*char[] arrayChar = appendMess.toString().toCharArray();
        for (char charM : arrayChar) {
@@ -160,8 +224,9 @@ public class Main {
         int outascii = Integer.parseInt(outMess, 2);
         System.out.println((char) outascii);*/
 
-    }
+        }
 
     }
+
 
 
