@@ -99,12 +99,41 @@ public class Main {
         StringBuilder decodSb = new StringBuilder();
         String[] decodeMess = new String[decLenght];
         int j=0;
-            for (int i = 0; i < cipherSb.length()-11; i = i + 11) {
+        for (int i = 0; i < cipherSb.length()-10; i = i + 11) {
                 decodeMess[j] = cipherSb.substring(i, i + 11);
                 j++;
             }
 
-        System.out.println(Arrays.toString(decodeMess));
+        System.out.println("массив зашифрованных строк " + Arrays.toString(decodeMess));
+
+        short[] DecodeappendMessAr = new short[length];
+        for (int i = 0; i<decLenght; i++) {
+            DecodeappendMessAr[i] = Short.parseShort(decodeMess[i], 2);
+        }
+        System.out.println("первый элемент массива для расшифровки "+Integer.toBinaryString(DecodeappendMessAr[0]));
+
+        short[] DecodeCipherMess = new short[length];
+        for (int i=0; i<decLenght; i++) {
+            DecodeCipherMess[i] = (short) (DecodeappendMessAr[i] ^ arrayKey[i]);
+        }
+        String[] DecodecipherSb = new String[decLenght];
+        for (int i=0;i<decLenght; i++) {
+            String StcipM = Integer.toBinaryString(DecodeCipherMess[i]);
+            if (StcipM.length() < 32) {
+                int LengthOfZero = 32 - StcipM.length();
+                StcipM = "0".repeat(LengthOfZero) + StcipM;
+                DecodecipherSb[i] = StcipM.substring(21, 32);
+            } else {
+                DecodecipherSb[i] = StcipM.substring(21, 32);
+            }
+        }
+        System.out.println("массив расшифрованных символов"+Arrays.toString(DecodecipherSb));
+        StringBuilder decryptedString = new StringBuilder();
+        for (int i=0; i<decLenght; i++) {
+            int outascii = Integer.parseInt(DecodecipherSb[i],2);
+            decryptedString.append((char) outascii);
+        }
+        System.out.println(decryptedString);
         /*String keyShortSt = Integer.toBinaryString(keyLong).substring(0,11);
         short keyShort = Short.parseShort(keyShortSt, 2);
         System.out.println(Integer.toBinaryString(keyShort));
